@@ -98,7 +98,7 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title{Independent Set of Rectangles} % The short title appears at the bottom of every slide, the full title is only on the title pageIntroduction
+\title{N-fold integer programming in cubic time} % The short title appears at the bottom of every slide, the full title is only on the title pageIntroduction
 
 \author{Piotr Żuber} % Your name
 \institute[University of Warsaw] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
@@ -108,7 +108,7 @@ University of Warsaw
 \medskip
 \textit{} % Your email address
 }
-\date{May 19, 2022} % Date, can be changed to a custom date
+\date{May 5, 2022} % Date, can be changed to a custom date
 
 \begin{document}
 
@@ -139,11 +139,14 @@ University of Warsaw
 % \renewcommand{\l}{\lambda}
 \newcommand{\g}{\gamma}
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
 \newcommand{\dis}{\displaystyle}
 \newcommand{\vect}[1]{\textbf{#1}}
 \newcommand{\maxnorm}[1]{\lVert #1 \rVert_{\infty}}
 \newcommand{\norm}[1]{\lVert #1 \rVert}
 \newcommand{\bigO}{\mathcal{O}}
+\newcommand{\cord}{\sqsubseteq}
+\newcommand{\graver}{\mathcal{G}}
 \renewcommand{\figurename}{Figure}
 
 \begin{frame}
@@ -162,550 +165,138 @@ University of Warsaw
 % \subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 
 \begin{frame}{Paper}
-Fabrizio Grandoni, Stefan Kratsch, Andreas Wiese - 
+Raymond Hemmecke, Schmuel Onn, Lyubov Romanchuk -- N-fold integer programming in cubic time 
 \textit{Parameterized Approximation Schemes for Independent Set of Rectangles and Geometric Knapsack}
 \end{frame}
 
 \begin{frame}{Introduction}
-    \begin{block}{PAS}
-        \begin{itemize}
-            \item Parametrized (integer $k > 0$)
-            \pause
-            \item Approximation ($\varepsilon > 0$)
-            \pause
-            \item Scheme
-        \end{itemize}
-    \end{block}
-    \pause
-    {\color{PineGreen} \textbf{Goal:}} Solution of size at least $k / (1 + \varepsilon)$ or information that the size of optimum solution is less than $k,$ in $f(k, \varepsilon) n^{g(\varepsilon)}$ time.
-\end{frame}
-
-
-
-\begin{frame}{Introduction}
-    \begin{block}{FPT complexity}
-        A parameterized problem of size $n$ is fixed-parameter tractable (FPT) if there is an $f(k)n^{\bigO(1)}$ time algorithm for an integer parameter $k$.
-    \end{block}
+    \begin{defi}[Bimatrix]
+        Matrix $A$ is a $(r, s)\times t$ bimatrix if $A = \left(\begin{matrix}A_1 \\ A_2 \end{matrix}\right)$ for $A_1 \in \Z^{r \times t}$ and $A_2 \in \Z^{s \times t}.$
+    \end{defi}
 \end{frame}
 
 \begin{frame}{Introduction}
-    \begin{block}{$W[1]$-hardness}
-        Assume the Clique problem is not FPT. The problem $P$ is $W[1]$-hard if it has a parameterized reduction to Clique.
+    \begin{block}{Bimatrix}
+        $A = \left(\begin{matrix}A_1 \\ A_2 \end{matrix}\right) \in (r,s) \times t.$
     \end{block}
-    
-    If a problem is $W[1]$-hard, there exists no algorithm to solve it in FPT time, unless $FPT = W[1].$
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{block}{Maximum Independent Set of Rectangles (MISR)}
-        \begin{itemize}
-            \item<1-> set of $n$ axis-parallel rectangles $\mathcal{R} = \{R_i: 1\leqslant i \leqslant n \};$
-            % \pause
-            \item<2-> $R_i$ is the open set of points $\left(x_i^{(1)}, x_i^{(2)}\right) \times \left(y_i^{(1)}, y_i^{(2)}\right);$
-            % \pause
-            \item<3-> $\mathcal{R'} \subseteq \mathcal{R}$ is a feasible solution if $R_i \cap R_j = \emptyset$ for any $R_i, R_j \in \mathcal{R'};$
-            % \pause
-            \item<4-> w.l.o.g $x_i^{(1)}, x_i^{(2)}, y_i^{(1)}, y_i^{(2)} \in \{0, 1, \ldots 2n - 1\}.$
-        \end{itemize}
-    \end{block}
-    % \pause
-    {\color{PineGreen} \textbf{Goal:}} A feasible solution of maximum cardinality $|\mathcal{R'}|.$ 
-    \begin{center}
-        \includegraphics[height=0.3\textheight]{misr.png}
-    \end{center}
-    }
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{fakt}[Marx, ESA '05]
-        MISR is $W[1]$-hard by reduction from Clique problem known to be $W[1]$-complete.
-    \end{fakt}
-    Hence, there is no FPT algorithm for MISR.
-    \begin{thm}[PAS for MISR]
-        There is a PAS for MISR with running time $k^{\bigO(k/\varepsilon^8)}n^{\bigO(1/\varepsilon^8)}.$
-    \end{thm}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.5\textwidth}
-    \begin{block}{Grid}
-    \begin{itemize}
-        \item<1-> non-uniform
-        
-        \item<2-> $k$ columns
-        
-        \item<3-> $k$ rows
-        
-        \item<4-> each input rectangle overlaps a corner of grid
-    \end{itemize} 
-    \end{block}
-    \end{minipage}\hfill
-    \begin{minipage}{0.4\textwidth}
-        \begin{center} \includegraphics[width=\textwidth]{grid.png}
-        \end{center}
-    \end{minipage}
-    }
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.5\textwidth}
-    \begin{block}{Grid}
-    \begin{itemize}
-        \item<1-> $k - 1$ vertical lines
-        % \pause
-        \item<2-> $k - 1$ horizontal lines
-        % \pause
-        \item<3-> each input rectangle intersects horizontal and vertical line
-    \end{itemize}
-    \end{block}
-    \end{minipage}\hfill
-    \begin{minipage}{0.4\textwidth}
-        \begin{center}
-            \includegraphics[width=\textwidth]{grid.png}
-        \end{center}
-    \end{minipage}
-    }
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{lm}
-        There is a polynomial time algorithm such that: 
-        \pause
-        \begin{itemize}
-            \item it computes a set of at most $k - 1$ vertical lines $\mathcal{L}_V$
-            \pause
-            \item each input rectangle is crossed by a computed line
-        \end{itemize}
-        or
-        \pause
-        \begin{itemize}
-        
-            \item it computes a feasible solution with $k$ rectangles.
-        \end{itemize}
-        \pause
-        Same statement holds for horizontal lines.
-    \end{lm}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{minipage}{0.45\textwidth}
-        
-        \includegraphics[width=\textwidth]{l1c1.png}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-        \begin{center}
-            \includegraphics[width=\textwidth]{l1c2.png}
-        \end{center}
-    \end{minipage}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{minipage}{0.45\textwidth}
-        
-        \includegraphics[width=\textwidth]{l1c2.png}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-        \begin{center}
-            \includegraphics[width=\textwidth]{l1c3.png}
-        \end{center}
-    \end{minipage}
-\end{frame}
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{minipage}{0.45\textwidth}
-        
-        \includegraphics[width=\textwidth]{l1c3.png}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-        \begin{center}
-            \includegraphics[width=\textwidth]{l1c4.png}
-        \end{center}
-    \end{minipage}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    If we drew less than $k$ lines
-    \begin{itemize}
-        \item we're done constructing at most $k - 1$ lines such that each input rectangle is intersected by one of these.
-    \end{itemize}
     \pause
-    else
-    \pause
-    \begin{itemize}
-        \item we can find a rectangle corresponding to each line
-        \pause
-        \item coordinates of rectangles are integer, so by construction, any pair of rectangles corresponding to two different lines is disjoint
-        \pause
-        \item chosen rectangles are pairwise disjoint thus form a feasible solution.
-        \pause
-    \end{itemize}
-    Identical arguments apply to horizontal lines.
+    \begin{defi}[N-fold product]
+        For any natural $n$ and fixed bimatrix $A,$ the $n$-fold product $A^{(n)} \in (r+ns) \times nt$ of $A$ is defined as
+        $$
+            A^{(n)} = \left(
+                \begin{matrix}
+                    A_1    & A_1    & \cdots & A_1    \\
+                    A_2    & 0      & \cdots & 0      \\
+                    0      & A_2    & \cdots & 0      \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    0      & 0      & \cdots & A_2
+                \end{matrix}
+            \right)
+        $$
+    \end{defi}
 \end{frame}
 
-\begin{frame}{Maximum Independent Set of Rectangles}
-    Applying the lemma, we either 
-    \begin{itemize}
-        \pause
-        \item find a set of $k$ independent rectangles
-    \end{itemize} 
-    \pause
-    or
-    \begin{itemize}
-        \pause
-        \item obtain $\mathcal L_{V}$ and $\mathcal L _{H}.$
-    \end{itemize}
-    \pause
-    For convenience, we define edge lines for both sets, so
-    $$
-        \mathcal L_V = \mathcal L_V \cup \left\{\ell_0^V = 0, \ell_{|\mathcal L_V| + 1}^V = 2n - 1\right\}
-    $$
-    \pause
-    $$
-        \mathcal L_H = \mathcal L_H \cup \left\{\ell_0^H = 0, \ell_{|\mathcal L_H| + 1}^H = 2n - 1\right\}
-    $$
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.6\textwidth}
-    \begin{block}{Grid cell}
+\begin{frame}{Introduction}
+    \begin{defi}[N-fold integer programming]
+        Given 
         \begin{itemize}
-            \item<1-> two consecutive vertical lines $\ell_i^V, \ell_{i+1}^V$;
-            % \pause
-            \item<2-> two consecutive horizontal lines $\ell_j^H, \ell_{j+1}^H;$
-            % \pause
-            \item<3-> cell's corners are the intersection of these lines;
-            % \pause
-            \item<4-> we interpret cell as a closed set;
-            % \pause
-            \item<5-> we denote the set of grid cells by $\mathcal G.$
-        \end{itemize}
-    \end{block}    
-    \end{minipage}\hfill
-    % \pause
-    \begin{minipage}{0.35\textwidth}
-    \includegraphics[width=\textwidth]{cell.png}
-    \end{minipage}
-    }
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.5\textwidth}
-        \visible<1->{Define $\mathcal G(R)$ as a rectangle of cells intersected by $R.$} \\
-        % \pause
-        \visible<2->{Each $\mathcal G(R)$ can be specified by its corner cells, so there are at most $k^4$ choices of $\mathcal G(R)$ for each $R.$}
-        % \pause
-        \visible<3->{
-        \begin{fakt}
-            \label{corners}
-            It takes $k^{\bigO(k)}$ time to guess the set of grid corners contained in $R$ for each $R$ from solution.
-        \end{fakt}}
-    \end{minipage}\hfill
-    \begin{minipage}{0.4\textwidth}
-        \includegraphics[width=\textwidth]{l14.png}
-    \end{minipage}
-    }
-    
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.55\textwidth}
-        \begin{block}{Graph $G_1$}
-        \begin{itemize}
-            \item<1-> $G_1 = (\mathcal R^*, E_1)$ for given solution $\mathcal R^*;$
-            % \pause
+            \item<1-> weight vector $\vect{w} \in \Z^{nt},$
             
-            \item<2-> $(R_i, R_j) \in E_1$ if and only if there exists such $g \in \mathcal G$ that $R_i$ and $R_j$ intersect $g$ and are adjacent in other than anti-diagonal way in $g.$
+            \item<2-> bound vectors $\vect{l}, \vect{u} \in \Z^{nt},$
+            
+            \item<3-> $b \in \Z^{r+ns},$
+            
+            \item<4-> $n$-fold product $A^{(n)}$
         \end{itemize}
-    \end{block}
-    \end{minipage}\hfill
-    \begin{minipage}{0.35\textwidth}
-        \includegraphics[width=\textwidth]{g12.png}
-    \end{minipage}
-    }
-    
+        $n$-fold integer programming is the following problem
+        \begin{equation*}
+            \min\{\vect{w}\vect{x} : A^{(n)}\vect{x} = \vect{b}, \vect{l} \leqslant \vect{x} \leqslant \vect{u}, \vect{x} \in \Z^{nt}\}.
+        \end{equation*}
+    \end{defi}
 \end{frame}
 
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{minipage}{0.45\textwidth}
-    \includegraphics[width=\textwidth]{g11.png}
-    \end{minipage}\hfill
-    % \pause
-    \begin{minipage}{0.45\textwidth}
-    \includegraphics[width=\textwidth]{g12.png}
-    \end{minipage}
+
+
+\begin{frame}{Introduction}
+    \begin{itemize}
+        \item<1-> The fastest algorithm for $n$-fold integer programming runs in $\bigO \left(n^{g(A)}L\right)$ time, where $g(A)$ is a Graver complexity of the bimatrix $A$ and $L$ in the length of problem input...
+        \item<2-> however, the Graver complexity can be quite large -- there are $\bigO(m)\times \bigO(m)$ matrices with $\Omega(2^m)$ complexity.
+        \item<3-> This algorithm can be improved to $\bigO(n^3L)$ regardless of $A.$
+    \end{itemize}
 \end{frame}
 
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.55\textwidth}
-        We draw edges in $G_1$ as:
-        \visible<2->{
-            \begin{itemize}
-                \item segments included in grid lines
-            \end{itemize}}
-        \visible<3->{or}
-        \visible<4-> {
-            \begin{itemize}
-                \item diagonals of cells.
-            \end{itemize}}
-        \visible<5->{Hence}
-        \visible<6->{
-            \begin{lm}
-                The graph $G_1$ is planar.
-            \end{lm}}
-    \end{minipage}\hfill
-    \begin{minipage}{0.35\textwidth}
-        \includegraphics[width=\textwidth]{g12.png}
-    \end{minipage}}
-    
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{minipage}{0.45\textwidth}
-    \includegraphics[width=\textwidth]{g12.png}
-    \end{minipage}\hfill
-    % \pause
-    \begin{minipage}{0.45\textwidth}
-    \includegraphics[width=\textwidth]{g13.png}
-    \end{minipage}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{lm}
-    \label{lemma9}
-        Let
+\begin{frame}{Graver complexity}
+    \begin{defi}[Conformal order]
+        Denote the conformal order relation by $\cord.$ For $\vect{u}, \vect{v} \in \Z^n,$ we say $\vect{u} \cord \vect{v},$ if for every $i:$
         \begin{itemize}
-            \item<1-> $G = (V, E)$ is a planar graph
-            \item<1-> $\varepsilon' > 0.$
+            \item<1-> $u_iv_i \geqslant 0$
+            \item<2-> and $|u_i| \leqslant |v_i|.$
         \end{itemize}
-        % \pause
-        \visible<2->{There exists a value $c' = \bigO(1/(\varepsilon')^2)$ for which:}
-        \begin{itemize}
-            \item<3-> there is $V' \subseteq V$ with $|V'| \geqslant (1-\varepsilon')|V|$
-            % \pause
-            \item<4-> in the graph $G' = G[V']$ each connected component has at most $c'$ vertices.
-        \end{itemize}
-    \end{lm}
-    \begin{center}
-        \includegraphics[width=0.5\textwidth]{l3.png}
-    \end{center}
-    }
+    \end{defi}
+    \pause
+    \begin{defi}[Graver basis]
+        For a given matrix $A,$ the Graver basis $\graver(A)$ is the set of conformally minimal vectors in $(\ker A \cap \Z^n)\backslash \{\vect{0}\}.$
+    \end{defi}
 \end{frame}
 
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{fakt}[Federickson]
-     For any integer $r$ any $n$-vertex planar graph can be divided into $\bigO(n/r)$ regions with no more than $r$ vertices each, and $\bigO(n/\sqrt r)$ boundary vertices in total.
+\begin{frame}{Graver complexity}
+    \begin{defi*}[Graver basis]
+        For a given matrix $A,$ the Graver basis $\graver(A)$ is the set of conformally minimal vectors in $(\ker A \cap \Z^n)\backslash \{\vect{0}\}.$
+    \end{defi*}
+    \begin{exampleblock}{Graver basis example}
+        Let $A = (1 \ 2 \ 1).$ \\
+        \pause
+        Then $\ker A \cap \Z^3 = \{(x_1, x_2, -x_1-2x_2): x_1, x_2 \in \Z\}.$ \\
+        \pause
+        Hence, $\graver(A) = \pm \{(0,1,-2), (1,0,-1), (-2,1,0), (1,-1,1)\}.$
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Graver complexity}
+    \begin{defi*}[Graver basis]
+        For a given matrix $A,$ the Graver basis $\graver(A)$ is the set of conformally minimal vectors in $(\ker A \cap \Z^n)\backslash \{\vect{0}\}.$
+    \end{defi*}
+    \begin{fakt}
+        The Graver basis $\graver(A)$ is finite. Indeed, note that $\cord$ in a partial order on $\Z^n$ and by Dickson's lemma it's a well-quasi-ordering on $\Z^n.$ Thus, there is no infinite antichains with respect to $(\Z^n, \cord).$
     \end{fakt}
-    \pause
-    We fix $r = \bigO(1/(\varepsilon')^2)$ and then we have at most $\varepsilon' \cdot n$ boundary vertices in total. We define $V'$ to be the set of non-boundary vertices. That proves above lemma.
 \end{frame}
 
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{block}{Graph $G_1'$}
-        \begin{itemize}
-            \item set $\varepsilon' = \varepsilon/2;$
-            \pause
-            \item let $c_1 = \bigO(1/\varepsilon^2);$
-            \pause
-            \item apply lemma \ref{lemma9} to $G_1$ with respective values.
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.55\textwidth}
-        \begin{block}{Graph $G_2$}
-        \begin{itemize}
-            \item<1-> $G_2 = (V_2, E_2);$
-            % \pause
-            \item<2-> $v \in V_2$ represents one connected component in $G_1';$
-            % \pause
-            \item<3-> there is an edge connecting $w_i, w_j \in V_2$ if there are $R_i, R_j$ such that:
-            % \pause
-            \begin{itemize}
-                \item<4-> they belong to the respective connected components of $G_1';$ 
-                % \pause
-                \item<5-> there is such a grid cell $g \in \mathcal G$ that $R_i$ and $R_j$ adjacent diagonally in $g.$
-            \end{itemize}
-        \end{itemize}
-    \end{block}
-    \end{minipage}\hfill
-    \begin{minipage}{0.35\textwidth}
-        \includegraphics[width=\textwidth]{g22.png}
-    \end{minipage}
-    }
-    
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{minipage}{0.45\textwidth}
-    \begin{lm}
-        Graph $G_2$ is planar.
-    \end{lm}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-    \includegraphics[width=\textwidth]{g22.png}
-    \end{minipage}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{block}{Graph $G_2'$}
-    \begin{itemize}
-        \item set $\varepsilon' = \varepsilon/2c_1;$
-        \pause
-        \item let $c_2 = \bigO((1/\varepsilon')^2) = \bigO(1/\varepsilon^6);$
-        \pause
-        \item apply lemma \ref{lemma9} to $G_2$ with respective values.
-    \end{itemize}
-    \end{block}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.5\textwidth}
-    We define a group $\mathcal R_q'$ for each connected component $\mathcal C_q$ of $V_2'.$ \\
-    % \pause
-    \visible<2->{The set $\mathcal R_q'$ contains all rectangles contained in the connected component $\mathcal C_q$ of $V_2'.$}
-    \end{minipage}\hfill
-    % \pause
+\begin{frame}{Graver complexity}
     \begin{minipage}{0.4\textwidth}
-        \includegraphics[width=\textwidth]{rq.png}
-    \end{minipage} \\}
-    \visible<3->{
-    We define $\mathcal R' = \coprod_q \mathcal R_q'.$}
-    
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{minipage}{0.5\textwidth}
-    \begin{lm}
-        \label{lemma11}
-        If $R_i, R_j \in \mathcal R'$ intersect the same cell $g \in \mathcal G,$ then there is such $\mathcal R_q'$ that $R_i, R_j \in \mathcal R_q'.$
-    \end{lm}
-    \end{minipage}\hfill
-    \begin{minipage}{0.4\textwidth}
-        \includegraphics[width=\textwidth]{rq.png}
-    \end{minipage} \\
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{minipage}{0.45\textwidth}
-    \begin{block}{Graph $G_1'$}
-        \begin{itemize}
-            \item set $\varepsilon' = \varepsilon/2;$
-            \item let $c_1 = \bigO(1/\varepsilon^2);$
-            \item apply lemma \ref{lemma9} to $G_1$ with respective values.
-        \end{itemize} 
-    \end{block}
-    \pause
-        Component $C_i$ of $G_1'$ contains at most $c_1 = \bigO(1/\varepsilon^2)$ vertices.
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-        \begin{block}{Graph $G_2'$}
-    \begin{itemize}
-        \item set $\varepsilon' = \varepsilon/2c_1;$
-        \item let $c_2 = \bigO((1/\varepsilon')^2) = \bigO(1/\varepsilon^6);$
-        \item apply lemma \ref{lemma9} to $G_2$ with respective values.
-    \end{itemize}
-    \end{block}
-    \pause
-    Component $\mathcal C_i$ of $G_2'$ contains at most $c_2 = \bigO(1/\varepsilon^6)$ vertices. 
+        \begin{defi}[Brick]
+            For any $n$ we write each vector $\vect x \in \Z^{nt}$ as a tuple $\vect x = (\vect x^1, \ldots, \vect x^n)$ of $n$ bricks $\vect x^i \in \Z^t$
+        \end{defi}
     \end{minipage}
-    \pause
-    \begin{lm}
-        \label{lemma12}
-        There is a constant $c = \bigO(1/\varepsilon^8)$ such that for each group $|\mathcal R_q'| \leqslant c.$
-    \end{lm}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{lm}
-        \label{lemma13}
-        $|\mathcal R'| \geqslant (1 - \varepsilon)|\mathcal R^*|.$
-    \end{lm}
-    \pause
-    \begin{itemize}
-        \item at most $|V_1| \cdot \frac\varepsilon2$ vertices are deleted from $G_1$ constructing $G_1'$
-        \pause
-        \item at most $|V_2| \cdot \frac{\varepsilon}{2c_1}$ vertices are deleted while constructing $G_2'$
-        \pause
-        \item Deleted vertices from $V_2$ represent at most $c_1 \cdot \frac{\varepsilon}{2c_1}|V_2| \leqslant |V_1'|\cdot \varepsilon/2 \leqslant |V_1| \cdot \varepsilon/2$ in $G_1$
-        \pause
-        \item $|\mathcal R'| \geqslant |\mathcal R^*| - 2 \cdot \frac{\varepsilon}{2}|V_1| = (1 - \varepsilon)|\mathcal R^*|.$
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{We have finally gathered all tools to prove the following}
-    \visible<2->{
     \begin{minipage}{0.55\textwidth}
-        \begin{lm}
-        \label{lemma7}
-        Let $|R^*| = k$ be the solution to the given instance. There is a constant $c = \bigO(1/\varepsilon^8)$ such that:
-        \pause
-        \begin{itemize}
-            \item<3-> there is a solution $\mathcal R' \subseteq \mathcal R^*;$
-            % \pause
-            \item<4-> $|\mathcal R'| \geqslant (1 - \varepsilon) |\mathcal R^*|;$
-            % \pause
-            \item<5-> $\coprod_{i=1}^s \mathcal R_i'$ with $s \leqslant k;$
-            % \pause
-            \item<6-> $|\mathcal R_j'| \leqslant c$
-            for $1\leqslant j \leqslant s;$
-            % \pause
-            \item<7-> if $R_i, R_j \in \mathcal R'$ intersect the same cell $g \in \mathcal G$ then $R_i, R_j \in \mathcal R_t'.$
-        \end{itemize}
-    \end{lm}
-    \end{minipage}\hfill
-    \begin{minipage}{0.35\textwidth}
-        \includegraphics[width=\textwidth]{l8.png}
+    \begin{center}
+        $$
+            \vect x = (1, 2, 3, 4, 5, 6)
+        $$
+        $$
+            \big\downarrow n = 3
+        $$
+        $$
+            \left(\vect x^1, \vect x^2, \vect x^3\right) = \left(
+                \left[\begin{matrix}
+                    1 \\ 2
+                \end{matrix}\right],
+                \left[\begin{matrix}
+                    3 \\ 4
+                \end{matrix}\right],
+                \left[\begin{matrix}
+                    5 \\ 6
+                \end{matrix}\right]
+            \right)
+        $$
+    \end{center}
     \end{minipage}
-    }
-    
+    \begin{defi}[Graver complexity for bimatrix]
+        The Graver complexity of an integer bimatrix $A$ is defined to be the largest number $g(A)$ of nonzero bricks $\vect g^i$ in any element $\vect g \in \graver\left(A^{(n)}\right)$ for any $n.$
+        The number $g(A)$ is bounded by a constant independent of $n.$ (WIP: proof)
+    \end{defi}
 \end{frame}
 
-\begin{frame}{Maximum Independent Set of Rectangles}
-    Let $\mathcal G_j$ be the set of cells intersected by at least one rectangle from $\mathcal R_j'.$ \\
-    \pause
-    By constructions, each cell can be intersected by rectangles of at most one group so they are disjoint. \\
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \visible<1->{
-    \begin{minipage}{0.55\textwidth}
-    \begin{itemize}
-        \item<1->{$\mathcal G_j = \bigcup_{R \in \mathcal R_j} \mathcal G(R).$}
-        % \pause
-        \item<2->{By lemma \ref{lemma7}, $|\mathcal R_j'| \leqslant c = \bigO(1/\varepsilon^8).$}
-    \end{itemize}
-        % \pause
-        \visible<3->{From fact \ref{corners}}
-        \visible<4->{
-        \begin{lm}
-            Each $\mathcal G_j$ can be computed in polynomial time $k^{\bigO(1/\varepsilon^8)}$.
-        \end{lm}}
-    \end{minipage}\hfill
-    \begin{minipage}{0.4\textwidth}
-        \includegraphics[width=\textwidth]{l14.png}
-    \end{minipage}
-    }
-\end{frame}
-
-\begin{frame}{Maximum Independent Set of Rectangles}
-    \begin{thm*}[PAS for MISR]
-        There is a PAS for MISR with running time $k^{\bigO(k/\varepsilon^8)}n^{\bigO(1/\varepsilon^8)}.$
-    \end{thm*}
-\end{frame}
-
-\begin{frame}{The end}
-    \centerline{Thank you!}
+\begin{frame}{Graver complexity}
 \end{frame}
 
 % \AtBeginSection[ ]
